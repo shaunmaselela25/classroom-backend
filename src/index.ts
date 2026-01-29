@@ -9,7 +9,7 @@ const PORT = 8000;
 
 app.use(cors({
   origin: true,
-  method: ["GET", "POST", "PUT", "DELETE"],
+  methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true,
 }))
 
