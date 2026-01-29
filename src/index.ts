@@ -8,6 +8,7 @@ const app = express();
 const PORT = 8000;
 
 app.use(cors({
+  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
   origin: true,
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true,
@@ -15,6 +16,8 @@ app.use(cors({
 
 app.use(express.json());
 
+
+//either router or subjectsRouter
 app.use('/api/subjects', router)
 
 app.get('/', (req, res) => {
