@@ -1,28 +1,36 @@
 import express from 'express';
-import cors from 'cors';
+import cors from "cors";
 
-import router from './routes/subjects.js';
+import subjectsRouter from "./routes/subjects.js";
+//import usersRouter from "./routes/users";
+//import classesRouter from "./routes/classes";
+import {securityMiddleware} from "./middleware/security.js";
+import {toNodeHandler} from "better-auth/node";
+import {auth} from "./lib/auth";
 
 const app = express();
 const PORT = 8000;
 
-const frontendOrigin = process.env.FRONTEND_URL ?? 'http://localhost:5173';
+if (!process.env.FRONTEND_URL) throw new Error('FRONTEND_URL is not set in .env file');
 
-app.use(
-  cors({
-    origin: frontendOrigin,
+app.use(cors({
+    origin: process.env.FRONTEND_URL,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    credentials: true,
-  })
-);
+    credentials: true
+}))
+
+app.all('/api/auth/*splat', toNodeHandler(auth));
 
 app.use(express.json());
 
-//either router or subjectsRouter
-app.use('/api/subjects', router);
+app.use('/api/subjects', subjectsRouter)
+//app.use('/api/users', usersRouter)
+//app.use('/api/classes', classesRouter)
+
+app.use(securityMiddleware);
 
 app.get('/', (req, res) => {
-  res.send('Hello, welcome to the Classroom API');
+  res.send('Hello, welcome to the Classroom API!');
 });
 
 app.listen(PORT, () => {
