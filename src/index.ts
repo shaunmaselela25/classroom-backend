@@ -5,8 +5,8 @@ import express from 'express';
 import cors from "cors";
 
 import subjectsRouter from "./routes/subjects.js";
-//import usersRouter from "./routes/users";
-//import classesRouter from "./routes/classes";
+import usersRouter from "./routes/users";
+import classesRouter from "./routes/classes";
 import {securityMiddleware} from "./middleware/security.js";
 import {toNodeHandler} from "better-auth/node";
 import {auth} from "./lib/auth.js";
@@ -27,8 +27,8 @@ app.all('/api/auth/*splat', toNodeHandler(auth));
 app.use(express.json());
 
 app.use('/api/subjects', subjectsRouter)
-//app.use('/api/users', usersRouter)
-//app.use('/api/classes', classesRouter)
+app.use('/api/users', usersRouter)
+app.use('/api/classes', classesRouter)
 
 app.use(securityMiddleware);
 
