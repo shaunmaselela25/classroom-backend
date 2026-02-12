@@ -32,6 +32,10 @@ app.use('/api/classes', classesRouter)
 
 app.use(securityMiddleware);
 
+app.get(["/api", "/api/"], (req, res) => {
+    res.json({ message: "Classroom API is running", version: "1.0.0" });
+});
+
 app.get('/', (req, res) => {
   res.send('Hello, welcome to the Classroom API!');
 });
