@@ -32,7 +32,7 @@ app.use('/api/classes', classesRouter)
 
 app.use(securityMiddleware);
 
-app.get('/api', (req, res) => {
+app.get('/', (req, res) => {
   res.send('Hello, welcome to the Classroom API!');
 });
 
