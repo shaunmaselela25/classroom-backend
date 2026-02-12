@@ -21,38 +21,34 @@ if (!process.env.FRONTEND_URL) {
 
 // ===== Middleware =====
 
-// Enable CORS
+// Enable CORS for all routes
 app.use(cors({
-    origin: process.env.FRONTEND_URL,        // Must match frontend exactly
+    origin: process.env.FRONTEND_URL,        // Must exactly match frontend URL
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true
 }));
 
 // Handle OPTIONS preflight globally
-app.options('*', cors({
-    origin: process.env.FRONTEND_URL,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true
-}));
+app.options('*', cors());
 
-// Parse JSON
+// Parse JSON bodies
 app.use(express.json());
 
 // ===== Authentication =====
-app.all('/api/auth/*splat', toNodeHandler(auth));
+// Fixed PathError: use :splat(*) instead of *splat
+app.all('/api/auth/:splat(*)', toNodeHandler(auth));
 
 // ===== Routes =====
-app.use('/api/subjects.js', subjectsRouter);
-app.use('/api/users.js', usersRouter);
-app.use('/api/classes.js', classesRouter);
+// Remove ".js" from route mounting — Express uses paths, not filenames
+app.use('/api/subjects', subjectsRouter);
+app.use('/api/users', usersRouter);
+app.use('/api/classes', classesRouter);
 
 // ===== Security Middleware =====
 app.use(securityMiddleware);
 
-// ===== Default API route =====
-// Makes GET /api return a JSON status instead of "Cannot GET /api"
+// ===== Default API status route =====
 app.get('/api', (req, res) => {
     res.json({ message: 'Classroom API is running', version: '1.0.0' });
 });
