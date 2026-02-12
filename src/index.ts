@@ -44,9 +44,9 @@ app.use(express.json());
 app.all('/api/auth/*splat', toNodeHandler(auth));
 
 // ===== Routes =====
-app.use('/api/subjects', subjectsRouter);
-app.use('/api/users', usersRouter);
-app.use('/api/classes', classesRouter);
+app.use('/api/subjects.js', subjectsRouter);
+app.use('/api/users.js', usersRouter);
+app.use('/api/classes.js', classesRouter);
 
 // ===== Security Middleware =====
 app.use(securityMiddleware);
