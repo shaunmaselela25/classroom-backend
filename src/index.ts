@@ -14,39 +14,38 @@ import { auth } from "./lib/auth.js";
 const app = express();
 const PORT = process.env.PORT || 8000;
 
-// Make sure FRONTEND_URL is set
+// ---------- ENV CHECK ----------
 if (!process.env.FRONTEND_URL) throw new Error('FRONTEND_URL is not set in .env file');
+if (!process.env.BETTER_AUTH_BASE_URL) console.warn('BETTER_AUTH_BASE_URL is not set. Better Auth may fail.');
 
-// ---------- CORS SETUP ----------
+// ---------- CORS ----------
 const corsOptions = {
-  origin: process.env.FRONTEND_URL, // exact frontend URL
+  origin: process.env.FRONTEND_URL,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  credentials: true,                // allow cookies / credentials
-  allowedHeaders: ['Content-Type', 'Authorization'], // headers allowed
-  preflightContinue: false,         // stop OPTIONS here
-  optionsSuccessStatus: 204,        // success status for OPTIONS
+  credentials: true,
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  preflightContinue: false,
+  optionsSuccessStatus: 204,
 };
 
-// Apply CORS globally
 app.use(cors(corsOptions));
-// Handle preflight for all routes
-app.options('*', cors(corsOptions));
+app.options(/.*/, cors(corsOptions)); // fixed wildcard
 
 // ---------- Middleware ----------
-app.use(express.json()); // parse JSON body
+app.use(express.json());
 
-// Better-auth handler
-app.all("/api/auth/*splat", toNodeHandler(auth));
+// Better-auth handler (fixed wildcard)
+app.all("/api/auth/:splat(*)", toNodeHandler(auth));
 
 // ---------- API ROUTES ----------
 app.use('/api/subjects', subjectsRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/classes', classesRouter);
 
-// Security middleware (after routes)
+// Security middleware
 app.use(securityMiddleware);
 
-// ---------- Health / Root Routes ----------
+// ---------- Health / Root ----------
 app.get(["/api", "/api/"], (req, res) => {
   res.json({ message: "Classroom API is running", version: "1.0.0" });
 });
@@ -55,7 +54,7 @@ app.get('/', (req, res) => {
   res.send('Hello, welcome to the Classroom API!');
 });
 
-// ---------- Start Server ----------
+// ---------- Start ----------
 app.listen(PORT, () => {
   console.log(`Server is running at http://localhost:${PORT}`);
 });
