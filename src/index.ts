@@ -35,7 +35,7 @@ app.options(/.*/, cors(corsOptions)); // fixed wildcard
 app.use(express.json());
 
 // Better-auth handler (fixed wildcard)
-app.all("/api/auth/:splat(*)", toNodeHandler(auth));
+app.all("/api/auth/*splat", toNodeHandler(auth));
 
 // ---------- API ROUTES ----------
 app.use('/api/subjects', subjectsRouter);
